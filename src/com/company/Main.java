@@ -11,10 +11,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
         CalculatorService service = new CalculatorServiceImpl();
 
-        ConsoleService.writeMessage("" +
-                "Приветсвует калькулятор.\n" +
-                "Каждый токен должен быть разделен пробелом, иначе выражение не выполнится :(\n" +
-                "Введите ваше выражение");
+        ConsoleService.writeMessage("""
+                Приветсвует калькулятор.
+                Каждый токен должен быть разделен пробелом, иначе выражение не выполнится :(
+                Введите ваше выражение""");
 
         String valueExpression = service.execute(ConsoleService.readLine());
 
