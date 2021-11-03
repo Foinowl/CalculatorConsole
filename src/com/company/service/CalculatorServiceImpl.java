@@ -1,15 +1,25 @@
 package com.company.service;
 
-import com.company.lexeme.Brackets;
-import com.company.lexeme.Lexeme;
-import com.company.lexeme.Operator;
+import com.company.exeptions.NotFoundOperationException;
+import com.company.exeptions.SyntaxErrorCalculator;
+import com.company.lexeme.*;
 
 import java.util.*;
+import static java.util.Map.entry;
+import static java.util.Map.ofEntries;
 
 public class CalculatorServiceImpl implements CalculatorService {
 
     private final String line;
-
+    private final Map<Lexeme, Integer> operatorPrecedenceMap = ofEntries(
+            entry(Brackets.OPEN_BRACKET, 4),
+            entry(Brackets.CLOSE_BRACKET, 4),
+            entry(BinaryOperator.ARITHMETIC_ADDITION, 2),
+            entry(BinaryOperator.ARITHMETIC_SUBTRACTION, 2),
+            entry(BinaryOperator.ARITHMETIC_MULTIPLICATION, 3),
+            entry(BinaryOperator.ARITHMETIC_DIVISION, 3),
+            entry(UnaryOperator.ARITHMETIC_UNARY_MINUS, 1)
+            );
     private ParserService parserService = new ParserServiceImpl();
 
     public CalculatorServiceImpl(String line) {
@@ -34,22 +44,62 @@ public class CalculatorServiceImpl implements CalculatorService {
 
         for (Lexeme lexeme : expressionLexeme) {
             if (lexeme instanceof Operator) {
-//                TODO: take out the top two values from stack, if operation is not unary
+                while (!stack.isEmpty()) {
+                    Lexeme headStackElement = stack.getFirst();
+                    if (headStackElement instanceof Operator) {
+                        Operator headStackOperator = (Operator) headStackElement;
+                        if (headStackOperator instanceof UnaryOperator) {
+                            break;
+                        } else {
+                            int currentOperatorPrecedence = getPrecedence((Operator) lexeme);
+                            int headStackOperatorPrecedence = getPrecedence(headStackOperator);
+                            if (currentOperatorPrecedence <= headStackOperatorPrecedence) {
+                                result.add(stack.removeFirst());
+                            } else {
+                                break;
+                            }
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                stack.addFirst(lexeme);
             } else if (lexeme instanceof Brackets) {
                 if (((Brackets) lexeme).isOpen()) {
                     stack.addFirst(lexeme);
                 } else {
                     // pop from stack until first open bracket
+                    Lexeme token = stack.removeFirst();
+                    while (token != Brackets.OPEN_BRACKET) {
+                        result.add(token);
+                        token = stack.removeFirst();
+                    }
                 }
             } else {
                 result.add(lexeme);
             }
         }
 
-        return null;
+        while (!stack.isEmpty()) {
+            final Lexeme headStackElement = stack.removeFirst();
+            if (headStackElement instanceof Operator) {
+                result.add(headStackElement);
+            } else {
+                throw new SyntaxErrorCalculator("Missing )");
+            }
+        }
+        return result;
     }
 
     private double calculatePostfixNotation(List<Lexeme> listExpression) {
         return 0.0;
+    }
+
+    private int getPrecedence(final Operator operator) {
+        final Integer precedence = operatorPrecedenceMap.get(operator);
+        if (precedence == null) {
+            throw new NotFoundOperationException("Precedence not defined for " + operator.getCode());
+        }
+        return precedence;
     }
 }

@@ -26,11 +26,11 @@ public class ParserServiceImpl implements ParserService {
     }
 
     private Lexeme buildExpressionOfLexemes(String token) {
-        Optional<Operator> optionalOperator = (BinaryOperator.of(token));
+        Optional<BinaryOperator> optionalOperator = (BinaryOperator.of(token));
         if (optionalOperator.isPresent()) {
             return optionalOperator.get();
         }
-        Optional<Lexeme> optionalBrackets = Brackets.of(token);
+        Optional<Brackets> optionalBrackets = Brackets.of(token);
         if (optionalBrackets.isPresent()) {
             return optionalBrackets.get();
         }
