@@ -46,8 +46,40 @@ public class ExpressionPostfixNotationImpl implements PostfixNotationService {
 
 
     @Override
-    public Number getAndCalculateResultByPostfixNotation(List<Lexeme> postfixExpression) {
-        return null;
+    public Double getAndCalculateResultByPostfixNotation(List<Lexeme> postfixExpression) {
+        Deque<ConstantValueLexeme> stack = new ArrayDeque<>();
+
+        for (Lexeme lexeme : postfixExpression) {
+            if (lexeme instanceof BinaryOperator) {
+                calculateBinaryOperator(stack, (BinaryOperator) lexeme);
+            } else if (lexeme instanceof ValueLexeme) {
+                stack.addLast((ConstantValueLexeme) lexeme);
+            }
+        }
+
+        return (Double) stack.getFirst().getValue();
+    }
+
+    private void calculateBinaryOperator(Deque<ConstantValueLexeme> stack, BinaryOperator operator) {
+        ValueLexeme operandOne = (ValueLexeme) stack.removeLast();
+        ValueLexeme operandTwo = (ValueLexeme) stack.removeLast();
+        ValueLexeme value = calculate(operandTwo, operator, operandOne);
+        stack.addLast(value);
+    }
+
+    private ValueLexeme calculate(ValueLexeme operand, BinaryOperator operator, ValueLexeme operand2) {
+        switch (operator) {
+            case ARITHMETIC_MULTIPLICATION:
+                return ValueLexeme.build(operand.getValue() * operand2.getValue());
+            case ARITHMETIC_DIVISION:
+                return ValueLexeme.build(operand.getValue() / operand2.getValue());
+            case ARITHMETIC_ADDITION:
+                return ValueLexeme.build(operand.getValue() + operand2.getValue());
+            case ARITHMETIC_SUBTRACTION:
+                return ValueLexeme.build(operand.getValue() - operand2.getValue());
+            default:
+                throw new IllegalStateException("Unexpected value: " + operator);
+        }
     }
 
     private void popOperatorFromStackUntilPrecedenceOperator(List<Lexeme> result, Deque<Lexeme> stack, Lexeme lexeme) {

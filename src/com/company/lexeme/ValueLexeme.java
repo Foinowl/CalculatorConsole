@@ -8,9 +8,9 @@ public class ValueLexeme implements ConstantValueLexeme {
     private static final Set<Class<?>> AVAILABLE_CLASS = Set.of(Integer.class, Double.class);
 
 
-    private Object value;
+    private Double value;
 
-    private ValueLexeme(Object value) {
+    private ValueLexeme(Double value) {
         if (value == null) {
             throw new IllegalOperationException("Null can't be participate in the expression");
         } else if (!AVAILABLE_CLASS.contains(value.getClass())) {
@@ -19,25 +19,28 @@ public class ValueLexeme implements ConstantValueLexeme {
         this.value = value;
     }
 
-    private static ValueLexeme of(final Object value) {
+    private static ValueLexeme of(final Double value) {
         return new ValueLexeme(value);
     }
 
     public static ValueLexeme build(String value) {
         try{
-            return ValueLexeme.of(Integer.parseInt(value));
-        } catch (NumberFormatException integerException) {
-            try {
-                return ValueLexeme.of(Double.parseDouble(value));
-            } catch (NumberFormatException doubleException) {
-                return ValueLexeme.of(value);
-            }
+            return ValueLexeme.of(Double.parseDouble(value));
+        } catch (NumberFormatException doubleException) {
+            throw new IllegalOperationException("Number is not supported");
+        }
+    }
 
+    public static ValueLexeme build(double value) {
+        try{
+            return ValueLexeme.of(value);
+        } catch (NumberFormatException doubleException) {
+            throw new IllegalOperationException("Number is not supported");
         }
     }
 
     @Override
-    public Object getValue() {
-        return null;
+    public Double getValue() {
+        return value;
     }
 }
