@@ -3,6 +3,7 @@ package com.company;
 public class Main {
 
     public static void main(String[] args) {
-	// write your code here
+        CalculatorService service = new CalculatorServiceImpl("4.2 + ( 2 * 3 / 3 ) - 6.1");
+        service.execute();
     }
 }
