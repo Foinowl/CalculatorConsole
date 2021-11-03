@@ -1,8 +1,10 @@
-package com.company;
+package com.company.lexeme;
+
+import com.company.exeptions.IllegalOperationException;
 
 import java.util.Set;
 
-public class ValueLexeme implements ConstantValueLexeme{
+public class ValueLexeme implements ConstantValueLexeme {
     private static final Set<Class<?>> AVAILABLE_CLASS = Set.of(Integer.class, Double.class);
 
 

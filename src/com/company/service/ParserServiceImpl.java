@@ -1,12 +1,11 @@
-package com.company;
+package com.company.service;
 
-import java.nio.charset.StandardCharsets;
+import com.company.exeptions.IllegalOperationException;
+import com.company.lexeme.*;
+
 import java.util.*;
 
-import static java.lang.String.format;
-import static java.util.stream.Collectors.joining;
-
-public class ParserServiceImpl implements ParserService{
+public class ParserServiceImpl implements ParserService {
     private ValidationServer validationServer = new ValidationServerImpl();
 
     @Override

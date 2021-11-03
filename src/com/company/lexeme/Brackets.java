@@ -1,8 +1,8 @@
-package com.company;
+package com.company.lexeme;
 
 import java.util.Optional;
 
-public enum Brackets implements Lexeme{
+public enum Brackets implements Lexeme {
     OPEN_BRACKET(true),
     CLOSE_BRACKET(false);
 

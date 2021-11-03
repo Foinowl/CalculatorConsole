@@ -1,8 +1,10 @@
-package com.company;
+package com.company.service;
+
+import com.company.lexeme.Lexeme;
 
 import java.util.List;
 
-public class CalculatorServiceImpl implements CalculatorService{
+public class CalculatorServiceImpl implements CalculatorService {
 
     private final String line;
 

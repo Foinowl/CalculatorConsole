@@ -1,8 +1,8 @@
-package com.company;
+package com.company.lexeme;
 
 import java.util.Optional;
 
-public enum BinaryOperator implements Operator{
+public enum BinaryOperator implements Operator {
     ARITHMETIC_MULTIPLICATION("*"),
     ARITHMETIC_DIVISION("/"),
     ARITHMETIC_ADDITION("+"),

@@ -1,4 +1,4 @@
-package com.company;
+package com.company.exeptions;
 
 public class IllegalOperationException extends IllegalArgumentException{
     public IllegalOperationException(String message) {
