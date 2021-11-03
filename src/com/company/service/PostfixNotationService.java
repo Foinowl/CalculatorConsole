@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface PostfixNotationService {
     List<Lexeme> buildPostfixNotation(List<Lexeme> expressionLexeme);
+
     Double getAndCalculateResultByPostfixNotation(List<Lexeme> postfixExpression);
 }

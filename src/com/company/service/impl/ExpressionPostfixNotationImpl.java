@@ -1,8 +1,9 @@
-package com.company.service;
+package com.company.service.impl;
 
 import com.company.exeptions.NotFoundOperationException;
 import com.company.exeptions.SyntaxErrorCalculator;
 import com.company.lexeme.*;
+import com.company.service.PostfixNotationService;
 
 import java.util.*;
 
@@ -16,8 +17,7 @@ public class ExpressionPostfixNotationImpl implements PostfixNotationService {
             entry(BinaryOperator.ARITHMETIC_ADDITION, 2),
             entry(BinaryOperator.ARITHMETIC_SUBTRACTION, 2),
             entry(BinaryOperator.ARITHMETIC_MULTIPLICATION, 3),
-            entry(BinaryOperator.ARITHMETIC_DIVISION, 3),
-            entry(UnaryOperator.ARITHMETIC_UNARY_MINUS, 1)
+            entry(BinaryOperator.ARITHMETIC_DIVISION, 3)
     );
 
     @Override
@@ -57,7 +57,12 @@ public class ExpressionPostfixNotationImpl implements PostfixNotationService {
             }
         }
 
-        return (Double) stack.getFirst().getValue();
+        Double resultValue = (Double) stack.getFirst().getValue();
+
+        if (resultValue.equals(Double.POSITIVE_INFINITY) || resultValue.equals(Double.NEGATIVE_INFINITY)) {
+            throw new ArithmeticException("На ноль делить нельзя");
+        }
+        return resultValue;
     }
 
     private void calculateBinaryOperator(Deque<ConstantValueLexeme> stack, BinaryOperator operator) {
@@ -68,35 +73,24 @@ public class ExpressionPostfixNotationImpl implements PostfixNotationService {
     }
 
     private ValueLexeme calculate(ValueLexeme operand, BinaryOperator operator, ValueLexeme operand2) {
-        switch (operator) {
-            case ARITHMETIC_MULTIPLICATION:
-                return ValueLexeme.build(operand.getValue() * operand2.getValue());
-            case ARITHMETIC_DIVISION:
-                return ValueLexeme.build(operand.getValue() / operand2.getValue());
-            case ARITHMETIC_ADDITION:
-                return ValueLexeme.build(operand.getValue() + operand2.getValue());
-            case ARITHMETIC_SUBTRACTION:
-                return ValueLexeme.build(operand.getValue() - operand2.getValue());
-            default:
-                throw new IllegalStateException("Unexpected value: " + operator);
-        }
+        return switch (operator) {
+            case ARITHMETIC_MULTIPLICATION -> ValueLexeme.build(operand.getValue() * operand2.getValue());
+            case ARITHMETIC_DIVISION -> ValueLexeme.build(operand.getValue() / operand2.getValue());
+            case ARITHMETIC_ADDITION -> ValueLexeme.build(operand.getValue() + operand2.getValue());
+            case ARITHMETIC_SUBTRACTION -> ValueLexeme.build(operand.getValue() - operand2.getValue());
+        };
     }
 
     private void popOperatorFromStackUntilPrecedenceOperator(List<Lexeme> result, Deque<Lexeme> stack, Lexeme lexeme) {
         while (!stack.isEmpty()) {
             Lexeme headStackElement = stack.getFirst();
-            if (headStackElement instanceof Operator) {
-                Operator headStackOperator = (Operator) headStackElement;
-                if (headStackOperator instanceof UnaryOperator) {
-                    break;
+            if (headStackElement instanceof Operator headStackOperator) {
+                int currentOperatorPrecedence = getPriority((Operator) lexeme);
+                int headStackOperatorPrecedence = getPriority(headStackOperator);
+                if (currentOperatorPrecedence <= headStackOperatorPrecedence) {
+                    result.add(stack.removeFirst());
                 } else {
-                    int currentOperatorPrecedence = getPriority((Operator) lexeme);
-                    int headStackOperatorPrecedence = getPriority(headStackOperator);
-                    if (currentOperatorPrecedence <= headStackOperatorPrecedence) {
-                        result.add(stack.removeFirst());
-                    } else {
-                        break;
-                    }
+                    break;
                 }
             } else {
                 break;
@@ -125,7 +119,7 @@ public class ExpressionPostfixNotationImpl implements PostfixNotationService {
     private int getPriority(final Operator operator) {
         final Integer precedence = priorityOperatorMap.get(operator);
         if (precedence == null) {
-            throw new NotFoundOperationException("Precedence not defined for " + operator.getCode());
+            throw new NotFoundOperationException("Приоритет не определен для" + operator.getCode());
         }
         return precedence;
     }

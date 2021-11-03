@@ -1,4 +1,6 @@
-package com.company.service;
+package com.company.service.impl;
+
+import com.company.service.ValidationServer;
 
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -20,7 +22,7 @@ public class ValidationServerImpl implements ValidationServer {
             String token = listIterator.next();
             if (token.equals("(")) {
                 bracketsCount++;
-            } else if(token.equals(")")) {
+            } else if (token.equals(")")) {
                 bracketsCount--;
             }
         }
@@ -28,9 +30,9 @@ public class ValidationServerImpl implements ValidationServer {
         return bracketsCount == 0;
     }
 
-    public  boolean validateUnaryOperatorBetweenBrackets(ListIterator<String> listIterator,
-                                                         String nextToken,
-                                                         String currentToken) {
+    public boolean validateUnaryOperatorBetweenBrackets(ListIterator<String> listIterator,
+                                                        String nextToken,
+                                                        String currentToken) {
 
         if (nextToken.equals(")")) {
             return canBuildNumberWithUnarPrefix(currentToken);

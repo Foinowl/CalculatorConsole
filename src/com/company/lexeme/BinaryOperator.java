@@ -23,12 +23,6 @@ public enum BinaryOperator implements Operator {
         return Optional.empty();
     }
 
-
-    @Override
-    public String getType() {
-        return "binary";
-    }
-
     @Override
     public String getCode() {
         return code;

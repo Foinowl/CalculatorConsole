@@ -1,13 +1,15 @@
-package com.company.service;
+package com.company.service.impl;
 
 import com.company.exeptions.IllegalOperationException;
 import com.company.exeptions.SyntaxErrorCalculator;
 import com.company.lexeme.*;
+import com.company.service.ParserService;
+import com.company.service.ValidationServer;
 
 import java.util.*;
 
 public class ParserServiceImpl implements ParserService {
-    private ValidationServer validationServer = new ValidationServerImpl();
+    private final ValidationServer validationServer = new ValidationServerImpl();
 
     @Override
     public List<Lexeme> parse(String line) {
@@ -51,6 +53,6 @@ public class ParserServiceImpl implements ParserService {
             iteratorListExpression.previous();
             return ValueLexeme.build(token);
         }
-        throw new IllegalOperationException("Unsupported token: " + token);
+        throw new IllegalOperationException("Неподдерживаемый токен: " + token);
     }
 }
