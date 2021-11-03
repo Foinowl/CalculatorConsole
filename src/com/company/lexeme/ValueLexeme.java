@@ -13,7 +13,7 @@ public class ValueLexeme implements ConstantValueLexeme {
         this.value = value;
     }
 
-    private static ValueLexeme of(final Double value) {
+    private static ValueLexeme of(Double value) {
         return new ValueLexeme(value);
     }
 

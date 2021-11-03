@@ -12,7 +12,7 @@ public enum Brackets implements Lexeme {
         this.open = open;
     }
 
-    public static Optional<Brackets> of(final String value) {
+    public static Optional<Brackets> of(String value) {
         if ("(".equals(value)) {
             return Optional.of(OPEN_BRACKET);
         } else if (")".equals(value)) {
