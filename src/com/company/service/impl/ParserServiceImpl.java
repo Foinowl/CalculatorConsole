@@ -15,6 +15,10 @@ public class ParserServiceImpl implements ParserService {
     public List<Lexeme> parse(String line) {
         List<String> listExpression = removeEitherSpaceFromLine(line);
 
+        if(!validationServer.validateLengthExpression(listExpression)) {
+            throw new SyntaxErrorCalculator("Недопустимое выражение");
+        }
+
         if (!validationServer.validateBracketsSequence(listExpression.iterator())) {
             throw new SyntaxErrorCalculator("Проверьте правильную последовательность скобок");
         }

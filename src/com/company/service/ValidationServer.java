@@ -1,6 +1,7 @@
 package com.company.service;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 public interface ValidationServer {
@@ -11,4 +12,6 @@ public interface ValidationServer {
     boolean validateUnaryOperatorBetweenBrackets(ListIterator<String> listIterator,
                                                  String nextToken,
                                                  String currentToken);
+
+    boolean validateLengthExpression(List<String> list);
 }

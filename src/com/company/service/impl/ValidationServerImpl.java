@@ -3,6 +3,7 @@ package com.company.service.impl;
 import com.company.service.ValidationServer;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 public class ValidationServerImpl implements ValidationServer {
@@ -39,4 +40,11 @@ public class ValidationServerImpl implements ValidationServer {
         }
         return false;
     }
+
+    @Override
+    public boolean validateLengthExpression(List<String> list) {
+        return !list.isEmpty() && list.size() != 1;
+    }
+
+
 }
