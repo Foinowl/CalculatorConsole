@@ -1,6 +1,7 @@
 package com.company.service;
 
 import com.company.exeptions.IllegalOperationException;
+import com.company.exeptions.SyntaxErrorCalculator;
 import com.company.lexeme.*;
 
 import java.util.*;
@@ -11,21 +12,26 @@ public class ParserServiceImpl implements ParserService {
     @Override
     public List<Lexeme> parse(String line) {
         List<String> listExpression = removeEitherSpaceFromLine(line);
+
+        if (!validationServer.validateBracketsSequence(listExpression.iterator())) {
+            throw new SyntaxErrorCalculator("Проверьте правильную последовательность скобок");
+        }
+
         List<Lexeme> listLexemes = new ArrayList<>();
 
-        for (String symbol : listExpression) {
-            listLexemes.add(buildExpressionOfLexemes(symbol));
+        ListIterator<String> iteratorListExpression = listExpression.listIterator();
+        while (iteratorListExpression.hasNext()) {
+            listLexemes.add(buildExpressionOfLexemes(iteratorListExpression, iteratorListExpression.next()));
         }
 
         return listLexemes;
     }
 
     private List<String> removeEitherSpaceFromLine(String line) {
-//        the case when all tokens are separated by a space
         return List.of(line.split("\\s+"));
     }
 
-    private Lexeme buildExpressionOfLexemes(String token) {
+    private Lexeme buildExpressionOfLexemes(ListIterator<String> iteratorListExpression, String token) {
         Optional<BinaryOperator> optionalOperator = (BinaryOperator.of(token));
         if (optionalOperator.isPresent()) {
             return optionalOperator.get();
@@ -36,7 +42,14 @@ public class ParserServiceImpl implements ParserService {
         }
 
         if (validationServer.canBuildNumber(token)) {
-            return (Lexeme) ValueLexeme.build(token);
+            return ValueLexeme.build(token);
+        }
+
+
+        String nextToken = iteratorListExpression.next();
+        if (validationServer.validateUnaryOperatorBetweenBrackets(iteratorListExpression, nextToken, token)) {
+            iteratorListExpression.previous();
+            return ValueLexeme.build(token);
         }
         throw new IllegalOperationException("Unsupported token: " + token);
     }
