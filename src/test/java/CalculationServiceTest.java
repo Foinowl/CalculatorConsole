@@ -79,7 +79,7 @@ public class CalculationServiceTest {
         assertThrows(IllegalOperationException.class, ()->calculatorService.execute(expression));
     }
 
-    @ParameterizedTest(name = "Тест метода CalculationServiceTest.TestInvalidDivisionByZero({0}) c исключением IllegalOperationException")
+    @ParameterizedTest(name = "Тест метода CalculationServiceTest.TestInvalidDivisionByZero({0}) c исключением ArithmeticException")
     @CsvSource({
             "5 / 0",
     })
