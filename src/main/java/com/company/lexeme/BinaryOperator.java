@@ -14,8 +14,8 @@ public enum BinaryOperator implements Operator {
         this.code = s;
     }
 
-    public static Optional<BinaryOperator> of(final String code) {
-        for (final BinaryOperator operator : values()) {
+    public static Optional<BinaryOperator> of(String code) {
+        for (BinaryOperator operator : values()) {
             if (operator.getCode().equals(code)) {
                 return Optional.of(operator);
             }
