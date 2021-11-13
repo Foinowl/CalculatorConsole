@@ -12,7 +12,7 @@ public class ParserServiceImpl implements ParserService {
     private final ValidationServer validationServer = new ValidationServerImpl();
 
     @Override
-    public List<Lexeme> parse(String line) {
+    public List<Lexeme> parse(String line) throws SyntaxErrorCalculator{
         List<String> listExpression = removeEitherSpaceFromLine(line);
 
         if(!validationServer.validateLengthExpression(listExpression)) {
@@ -37,7 +37,7 @@ public class ParserServiceImpl implements ParserService {
         return List.of(line.split("\\s+"));
     }
 
-    private Lexeme buildExpressionOfLexemes(ListIterator<String> iteratorListExpression, String token) {
+    private Lexeme buildExpressionOfLexemes(ListIterator<String> iteratorListExpression, String token) throws IllegalOperationException{
         Optional<BinaryOperator> optionalOperator = (BinaryOperator.of(token));
         if (optionalOperator.isPresent()) {
             return optionalOperator.get();
@@ -53,10 +53,11 @@ public class ParserServiceImpl implements ParserService {
 
 
         String nextToken = iteratorListExpression.next();
-        if (validationServer.validateUnaryOperatorBetweenBrackets(iteratorListExpression, nextToken, token)) {
+        if (validationServer.validateUnaryOperatorBetweenBrackets(nextToken, token)) {
             iteratorListExpression.previous();
             return ValueLexeme.build(token);
         }
+
         throw new IllegalOperationException("Неподдерживаемый токен: " + token);
     }
 }

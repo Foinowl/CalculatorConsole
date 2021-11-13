@@ -1,5 +1,5 @@
 package com.company.service;
 
 public interface CalculatorService {
-    String execute(String line);
+    double execute(String line) throws Exception;
 }
