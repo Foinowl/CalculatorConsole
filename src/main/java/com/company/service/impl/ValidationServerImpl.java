@@ -4,7 +4,6 @@ import com.company.service.ValidationServer;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 public class ValidationServerImpl implements ValidationServer {
     @Override
@@ -31,7 +30,7 @@ public class ValidationServerImpl implements ValidationServer {
         return bracketsCount == 0;
     }
 
-    public boolean validateUnaryOperatorBetweenBrackets(ListIterator<String> listIterator,
+    public boolean validateUnaryOperatorBetweenBrackets(
                                                         String nextToken,
                                                         String currentToken) {
 

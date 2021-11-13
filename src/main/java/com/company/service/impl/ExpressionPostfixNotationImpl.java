@@ -1,5 +1,6 @@
 package com.company.service.impl;
 
+import com.company.exeptions.IllegalOperationException;
 import com.company.exeptions.NotFoundOperationException;
 import com.company.exeptions.SyntaxErrorCalculator;
 import com.company.lexeme.*;
@@ -21,7 +22,7 @@ public class ExpressionPostfixNotationImpl implements PostfixNotationService {
     );
 
     @Override
-    public List<Lexeme> buildPostfixNotation(final List<Lexeme> expressionLexeme) {
+    public List<Lexeme> buildPostfixNotation(final List<Lexeme> expressionLexeme) throws SyntaxErrorCalculator, NotFoundOperationException {
         List<Lexeme> result = new ArrayList<>();
         Deque<Lexeme> stack = new ArrayDeque<>();
 
@@ -66,10 +67,14 @@ public class ExpressionPostfixNotationImpl implements PostfixNotationService {
     }
 
     private void calculateBinaryOperator(Deque<ConstantValueLexeme> stack, BinaryOperator operator) {
-        ValueLexeme operandOne = (ValueLexeme) stack.removeLast();
-        ValueLexeme operandTwo = (ValueLexeme) stack.removeLast();
-        ValueLexeme value = calculate(operandTwo, operator, operandOne);
-        stack.addLast(value);
+        try {
+            ValueLexeme operandOne = (ValueLexeme) stack.removeLast();
+            ValueLexeme operandTwo = (ValueLexeme) stack.removeLast();
+            ValueLexeme value = calculate(operandTwo, operator, operandOne);
+            stack.addLast(value);
+        } catch (NoSuchElementException exception) {
+            throw new IllegalOperationException(String.format("После оперетора : (%s) , должен идти операнд", operator));
+        }
     }
 
     private ValueLexeme calculate(ValueLexeme operand, BinaryOperator operator, ValueLexeme operand2) {
@@ -81,7 +86,7 @@ public class ExpressionPostfixNotationImpl implements PostfixNotationService {
         };
     }
 
-    private void popOperatorFromStackUntilPrecedenceOperator(List<Lexeme> result, Deque<Lexeme> stack, Lexeme lexeme) {
+    private void popOperatorFromStackUntilPrecedenceOperator(List<Lexeme> result, Deque<Lexeme> stack, Lexeme lexeme) throws NotFoundOperationException {
         while (!stack.isEmpty()) {
             Lexeme headStackElement = stack.getFirst();
             if (headStackElement instanceof Operator headStackOperator) {
@@ -105,18 +110,16 @@ public class ExpressionPostfixNotationImpl implements PostfixNotationService {
         }
     }
 
-    private void popOperationsFromStack(List<Lexeme> result, Deque<Lexeme> stack) {
+    private void popOperationsFromStack(List<Lexeme> result, Deque<Lexeme> stack) throws SyntaxErrorCalculator {
         while (!stack.isEmpty()) {
             Lexeme headStackElement = stack.removeFirst();
             if (headStackElement instanceof Operator) {
                 result.add(headStackElement);
-            } else {
-                throw new SyntaxErrorCalculator("Пропущена )");
             }
         }
     }
 
-    private int getPriority(final Operator operator) {
+    private int getPriority(final Operator operator) throws  NotFoundOperationException{
         final Integer precedence = priorityOperatorMap.get(operator);
         if (precedence == null) {
             throw new NotFoundOperationException("Приоритет не определен для" + operator.getCode());

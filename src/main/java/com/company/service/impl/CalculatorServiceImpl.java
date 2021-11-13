@@ -13,11 +13,10 @@ public class CalculatorServiceImpl implements CalculatorService {
     public CalculatorServiceImpl() {
     }
 
-    public String execute(String line) {
+    public double execute(String line) throws Exception {
         List<Lexeme> listLexeme = parserService.parse(line);
 
         List<Lexeme> listPostfixNotation = postfixNotationService.buildPostfixNotation(listLexeme);
-        double resultValueFromExpression = postfixNotationService.getAndCalculateResultByPostfixNotation(listPostfixNotation);
-        return String.format("%.2f", resultValueFromExpression);
+        return postfixNotationService.getAndCalculateResultByPostfixNotation(listPostfixNotation);
     }
 }
